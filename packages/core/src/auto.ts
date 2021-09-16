@@ -1684,7 +1684,10 @@ export default class Auto {
   private async oldRelease(
     options: IShipItOptions
   ): Promise<ShipitInfo | undefined> {
-    const latestTag = await this.git?.getLatestTagInBranch();
+    const currentBranch = getCurrentBranch();
+    const oldVersionBranchPrefix = this.config?.versionBranches as | string;
+    const oldVersionReleaseNumber = currentBranch?.replace(oldVersionBranchPrefix, "") as string;
+    const latestTag = await this.git?.getLatestReleasedTagWithPattern(this.prefixRelease(oldVersionReleaseNumber));
     const result = await this.publishFullRelease({
       ...options,
       from: latestTag,
